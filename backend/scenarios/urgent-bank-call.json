@@ -1,0 +1,339 @@
+{
+  "id": "urgent-bank-call",
+  "title": "The Urgent Fraud Department Call",
+  "category": "impersonation",
+  "difficulty": "medium",
+  "estimatedDuration": 3,
+  "learningObjectives": [
+    "Bank officials will never ask for your one-time password (OTP) or UPI PIN",
+    "Recognize false urgency threats such as immediate account freezing",
+    "Always disconnect and initiate contact through verified phone numbers on your card"
+  ],
+  "startingContext": "You receive an urgent phone call from 'Officer Mehta, Surya National Bank fraud desk' (fictional bank) claiming a suspicious ₹24,000 debit was attempted on your card.",
+  "skills": [
+    "impersonation",
+    "urgency",
+    "safe_verification"
+  ],
+  "redFlags": [
+    {
+      "id": "C-RF1",
+      "label": "Unsolicited caller-initiated panic about suspicious debit",
+      "explanation": "Scammers manufacture high-stakes panic to make victims vulnerable and compliant."
+    },
+    {
+      "id": "C-RF2",
+      "label": "Authority intimidation and 15-minute account freeze threat",
+      "explanation": "Threatening sudden account lockouts forces victims into immediate action without thinking."
+    },
+    {
+      "id": "C-RF3",
+      "label": "Caller requesting one-time password or PIN code",
+      "explanation": "Authentic bank representatives never request passwords, OTPs, or secret credentials."
+    },
+    {
+      "id": "C-RF4",
+      "label": "Instruction to stay on the line and tell nobody",
+      "explanation": "Isolating the victim prevents second opinions from friends, relatives, or true bank staff."
+    }
+  ],
+  "startNodeId": "C1",
+  "decisionNodes": [
+    {
+      "id": "C1",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "call",
+        "speaker": "Officer Mehta (fictional)",
+        "text": "This is Surya National Bank security division. An unauthorized debit of ₹24,000 is pending on your card. We must verify your identity within 15 minutes or your account will be permanently frozen.",
+        "details": {
+          "banner": "SIMULATION — NOT A REAL TRANSACTION.",
+          "caller": "Officer Mehta, Surya National Bank (fictional)",
+          "status": "Incoming Voice Call"
+        }
+      },
+      "relevantSkills": [
+        "impersonation",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "C-RF1",
+        "C-RF2"
+      ],
+      "feedback": {
+        "safeAlternative": "Hang up immediately. Contact the official customer care number printed on the back of your card.",
+        "considerNext": "Never verify account details over unsolicited incoming calls."
+      },
+      "choices": [
+        {
+          "id": "C1-a",
+          "label": "Answer questions and confirm my details",
+          "riskLevel": "risky",
+          "scoreDelta": 0,
+          "skillUpdates": {
+            "impersonation": -4,
+            "urgency": -2,
+            "safe_verification": -2
+          },
+          "nextNodeId": "C2",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You stayed on the line and began sharing personal verification details.",
+            "why": "Engaging with caller identity checks hands sensitive data to potential impersonators."
+          }
+        },
+        {
+          "id": "C1-b",
+          "label": "I'll hang up and call the number on my card / official app",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "impersonation": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "C3",
+          "catches": [
+            "C-RF1",
+            "C-RF2"
+          ],
+          "explanation": {
+            "whatHappened": "You hung up and chose to call back via the verified number printed on your card.",
+            "why": "Inbound calls can be spoofed; only numbers from official documents can be trusted."
+          }
+        },
+        {
+          "id": "C1-c",
+          "label": "Hang up and ignore it",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "impersonation": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "C-HANGUP",
+          "catches": [
+            "C-RF2"
+          ],
+          "explanation": {
+            "whatHappened": "You hung up the call immediately without verifying.",
+            "why": "Ending the call stops manipulation, though checking your bank app is recommended to confirm safety."
+          }
+        }
+      ]
+    },
+    {
+      "id": "C2",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "sms",
+        "speaker": "Officer Mehta (fictional)",
+        "text": "An SMS arrives with code ●●●●●●. Caller says: 'Read that 6-digit cancellation code to me immediately to stop the debit. Stay on the line, do not talk to anyone else!'",
+        "details": {
+          "banner": "SIMULATION — NOT A REAL TRANSACTION.",
+          "status": "Incoming Security Code"
+        }
+      },
+      "relevantSkills": [
+        "impersonation",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "C-RF2",
+        "C-RF3",
+        "C-RF4"
+      ],
+      "feedback": {
+        "safeAlternative": "Never speak or share OTP codes with anyone. Bank SMS explicitly states never to share OTP.",
+        "considerNext": "Any caller asking for an OTP is attempting an unauthorized transaction."
+      },
+      "choices": [
+        {
+          "id": "C2-a",
+          "label": "Read the OTP out",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "impersonation": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "C-LOSS",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You spoke the one-time code to the caller.",
+            "why": "Sharing the code authorizes the attacker's transfer, resulting in immediate financial loss."
+          }
+        },
+        {
+          "id": "C2-b",
+          "label": "Refuse to share the OTP and end the call",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "impersonation": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "C3",
+          "catches": [
+            "C-RF3",
+            "C-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You refused to divulge the code and disconnected the call.",
+            "why": "Holding onto your one-time passwords prevents unauthorized account access."
+          }
+        },
+        {
+          "id": "C2-c",
+          "label": "Say I'll call back after speaking to family",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "impersonation": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "C3",
+          "catches": [
+            "C-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You broke the psychological isolation tactic by seeking outside advice.",
+            "why": "Consulting trusted persons breaks the pressure barrier created by scammers."
+          }
+        }
+      ]
+    },
+    {
+      "id": "C3",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "app_view",
+        "speaker": "Surya National Bank Helpline (fictional)",
+        "text": "Official support confirms: 'We have not attempted any debit, and bank representatives never ask for OTPs or PINs over the phone.'",
+        "details": {
+          "status": "Verified Official Support"
+        }
+      },
+      "relevantSkills": [
+        "impersonation",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "C-RF1",
+        "C-RF3"
+      ],
+      "feedback": {
+        "safeAlternative": "Dial the national cyber helpline 1930 or submit details on the official reporting portal.",
+        "considerNext": "Reporting scam calls helps authorities disable fraudulent numbers."
+      },
+      "choices": [
+        {
+          "id": "C3-a",
+          "label": "Report the number via 1930 / cybercrime.gov.in",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "impersonation": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "C-REPORTED",
+          "catches": [
+            "C-RF1",
+            "C-RF3"
+          ],
+          "explanation": {
+            "whatHappened": "You reported the fraudulent caller to the official cyber fraud helpline.",
+            "why": "Prompt reporting helps track down impersonation syndicates."
+          }
+        },
+        {
+          "id": "C3-b",
+          "label": "Just block the number",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "impersonation": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "C-SAFE",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You blocked the caller number on your device.",
+            "why": "Blocking protects your device from repeat calls, though reporting helps others."
+          }
+        }
+      ]
+    },
+    {
+      "id": "C-LOSS",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Your account was compromised by sharing the verification code."
+      },
+      "outcome": {
+        "type": "loss",
+        "title": "Account Compromised by Disclosing OTP",
+        "text": "In this simulation, that choice would have cost you ₹24,000. Sharing the OTP allowed the impersonator to authorize a real transfer out of your account. No real money moved."
+      },
+      "choices": []
+    },
+    {
+      "id": "C-REPORTED",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Impersonation fraud thwarted and reported to cybercrime authorities."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Impersonator Thwarted and Reported",
+        "text": "You recognized that genuine bank staff never ask for OTPs or PINs. You hung up, confirmed safety with official support, and reported the attempt."
+      },
+      "choices": []
+    },
+    {
+      "id": "C-SAFE",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Suspicious call terminated safely."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Call Terminated Safely",
+        "text": "You did not disclose credentials to the caller and avoided financial loss."
+      },
+      "choices": []
+    },
+    {
+      "id": "C-HANGUP",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Call disconnected immediately."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Immediate Disconnect",
+        "text": "You refused to engage with high-pressure caller intimidation."
+      },
+      "choices": []
+    }
+  ],
+  "recommendedSafeActions": [
+    "Never disclose one-time passwords, UPI PINs, or card CVVs to any caller",
+    "Disconnect suspicious calls and reach out via the official customer support number on your debit card",
+    "Report suspicious numbers directly to national fraud reporting lines such as 1930"
+  ],
+  "learningSummary": "Impersonation scams thrive on creating fear of sudden loss. True financial institutions will never call to demand that you read aloud an OTP to cancel a transaction."
+}

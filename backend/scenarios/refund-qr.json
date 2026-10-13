@@ -1,0 +1,402 @@
+{
+  "id": "refund-qr",
+  "title": "The Fake Refund QR Trap",
+  "category": "qr_manipulation",
+  "difficulty": "medium",
+  "estimatedDuration": 3,
+  "learningObjectives": [
+    "Receiving money on UPI never requires scanning a QR code or entering your PIN",
+    "Identify mismatched transaction types where a refund is structured as a PAY debit",
+    "Verify order returns and refunds solely through official customer support channels"
+  ],
+  "startingContext": "You receive a message from 'FastCart Support' (fictional) claiming a ₹499 refund for a cancelled order will expire in 10 minutes unless you scan an attached QR code.",
+  "skills": [
+    "qr_collect",
+    "urgency",
+    "safe_verification"
+  ],
+  "redFlags": [
+    {
+      "id": "B-RF1",
+      "label": "Unsolicited refund notification for an order you never cancelled",
+      "explanation": "Scammers send unexpected refund notices to arouse curiosity and prompt hasty actions."
+    },
+    {
+      "id": "B-RF2",
+      "label": "Claim that receiving money requires scanning a QR or entering a PIN",
+      "explanation": "Scanning a QR code or entering a PIN on UPI always debits your account, never credits it."
+    },
+    {
+      "id": "B-RF3",
+      "label": "Expiry countdown pressure (10 minutes remaining)",
+      "explanation": "Urgency limits critical thinking and pushes victims to act before verifying."
+    },
+    {
+      "id": "B-RF4",
+      "label": "Payment request screen shows PAY instead of RECEIVE",
+      "explanation": "The interface displays a debit request for an inflated amount rather than an incoming credit."
+    }
+  ],
+  "startNodeId": "B1",
+  "decisionNodes": [
+    {
+      "id": "B1",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "qr_message",
+        "speaker": "FastCart Support (fictional)",
+        "text": "Dear customer, your refund of ₹499 for order #84912 is waiting. Scan this QR code within 10 minutes to receive credit into your UPI account.",
+        "details": {
+          "banner": "SIMULATION — NOT A REAL TRANSACTION.",
+          "status": "Awaiting scan"
+        }
+      },
+      "relevantSkills": [
+        "qr_collect",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "B-RF1",
+        "B-RF2",
+        "B-RF3"
+      ],
+      "feedback": {
+        "safeAlternative": "Never scan a QR code to receive money. Refunds credit automatically to the original payment source.",
+        "considerNext": "Check your original order status inside the merchant app directly."
+      },
+      "choices": [
+        {
+          "id": "B1-a",
+          "label": "Scan the QR to claim the refund",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "qr_collect": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "B2",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You scanned the QR code from the unsolicited message.",
+            "why": "QR codes in UPI payments are used to pay money, never to receive money."
+          }
+        },
+        {
+          "id": "B1-b",
+          "label": "Ask: why do I need to scan to receive money?",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "qr_collect": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "B3",
+          "catches": [
+            "B-RF2"
+          ],
+          "explanation": {
+            "whatHappened": "You questioned the premise of scanning a QR code to receive funds.",
+            "why": "Questioning abnormal payment steps is good, but scammers often respond with scripted reassurance."
+          }
+        },
+        {
+          "id": "B1-c",
+          "label": "Skip the QR; open the official app myself",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "qr_collect": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "B4",
+          "catches": [
+            "B-RF1",
+            "B-RF2",
+            "B-RF3"
+          ],
+          "explanation": {
+            "whatHappened": "You bypassed the suspicious QR and checked your actual orders independently.",
+            "why": "Authentic order cancellations and refunds always show in your official account portal."
+          }
+        }
+      ]
+    },
+    {
+      "id": "B2",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "pay_screen",
+        "speaker": "Simulated UPI Screen",
+        "text": "UPI Collect Request: Pay ₹4,999 to refund-desk@sim. Note: 'Order Refund Processing'.",
+        "details": {
+          "amount": "₹4,999",
+          "receiver": "refund-desk@sim",
+          "banner": "SIMULATION — NOT A REAL TRANSACTION."
+        }
+      },
+      "relevantSkills": [
+        "qr_collect",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "B-RF2",
+        "B-RF4"
+      ],
+      "feedback": {
+        "safeAlternative": "Cancel immediately. If the screen says PAY or asks for your PIN, money will leave your account.",
+        "considerNext": "Always read the prompt carefully: 'PAY' means debit, 'RECEIVE' means credit."
+      },
+      "choices": [
+        {
+          "id": "B2-a",
+          "label": "Approve — it's needed for the refund",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "qr_collect": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "B-LOSS",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You approved the payment request thinking it was required to receive your refund.",
+            "why": "Approving a collect request transfers your money to the fraudster."
+          }
+        },
+        {
+          "id": "B2-b",
+          "label": "Stop. This says PAY, not RECEIVE. Cancel.",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "qr_collect": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "B-CAUGHT-LATE",
+          "catches": [
+            "B-RF2",
+            "B-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You read the payment screen carefully, spotted the PAY debit attempt, and cancelled.",
+            "why": "Noticing the transaction type saved your funds at the final second."
+          }
+        },
+        {
+          "id": "B2-c",
+          "label": "Cancel and check the official app",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "qr_collect": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "B4",
+          "catches": [
+            "B-RF2",
+            "B-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You aborted the transaction and went directly to verify on the merchant app.",
+            "why": "Exiting suspicious flows and using official channels is best practice."
+          }
+        }
+      ]
+    },
+    {
+      "id": "B3",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "chat",
+        "speaker": "FastCart Support (fictional)",
+        "text": "Sir, our new server protocol requires QR verification to auto-credit your wallet. Only 6 minutes left before the voucher is voided. Scan now please.",
+        "details": {
+          "status": "Pressure tactic"
+        }
+      },
+      "relevantSkills": [
+        "qr_collect",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "B-RF2",
+        "B-RF3"
+      ],
+      "feedback": {
+        "safeAlternative": "Discontinue contact. Technical jargon like 'server protocol' is frequently used to mislead victims.",
+        "considerNext": "Genuine support teams never force immediate action under threat of cancellation."
+      },
+      "choices": [
+        {
+          "id": "B3-a",
+          "label": "Okay, scanning",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "qr_collect": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "B2",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You accepted the fake technical explanation and proceeded to scan.",
+            "why": "Fraudsters use technical mumbo-jumbo to confuse users into making dangerous moves."
+          }
+        },
+        {
+          "id": "B3-b",
+          "label": "Stop replying; check the official app",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "qr_collect": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "B4",
+          "catches": [
+            "B-RF3"
+          ],
+          "explanation": {
+            "whatHappened": "You disengaged from the conversation and opted for independent verification.",
+            "why": "Cutting off communication stops the scammer from exerting further manipulation."
+          }
+        }
+      ]
+    },
+    {
+      "id": "B4",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "app_view",
+        "speaker": "Official FastCart App (fictional)",
+        "text": "Order History: All recent orders delivered. No cancelled orders found. No pending refunds exist for your account.",
+        "details": {
+          "status": "Verified Account History"
+        }
+      },
+      "relevantSkills": [
+        "qr_collect",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "B-RF1"
+      ],
+      "feedback": {
+        "safeAlternative": "Report the fraudulent contact number to the merchant's customer grievance portal.",
+        "considerNext": "Flag phishing messages to mobile carriers or cyber safety portals."
+      },
+      "choices": [
+        {
+          "id": "B4-a",
+          "label": "Block and report the sender",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "qr_collect": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "B-SAFE",
+          "catches": [
+            "B-RF1"
+          ],
+          "explanation": {
+            "whatHappened": "You confirmed the message was bogus, then blocked and reported the sender.",
+            "why": "Reporting malicious senders helps prevent fraud against other consumers."
+          }
+        },
+        {
+          "id": "B4-b",
+          "label": "Just ignore it",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "qr_collect": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "B-IGNORED",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You ignored the message and took no further action.",
+            "why": "Ignoring keeps you safe, though reporting would have warned other potential victims."
+          }
+        }
+      ]
+    },
+    {
+      "id": "B-LOSS",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Your account was debited instead of receiving a refund."
+      },
+      "outcome": {
+        "type": "loss",
+        "title": "Money Debited Via Reverse QR Scam",
+        "text": "In this simulation, that choice would have cost you ₹4,999. Approving the request authorized a debit from your account rather than receiving a refund. No real money moved."
+      },
+      "choices": []
+    },
+    {
+      "id": "B-CAUGHT-LATE",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "You caught the scam before the transaction completed."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Stopped Just in Time",
+        "text": "You caught the discrepancy before completing the transfer. The QR code was a reverse-collect request designed to drain your account."
+      },
+      "choices": []
+    },
+    {
+      "id": "B-SAFE",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Phishing attempt prevented and reported."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Fraud Discovered and Reported",
+        "text": "You bypassed the deceptive QR entirely, verified your true account state directly in the app, and reported the fraudster."
+      },
+      "choices": []
+    },
+    {
+      "id": "B-IGNORED",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Scam message safely dismissed."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Scam Avoided by Non-Engagement",
+        "text": "You did not fall for the scam, though reporting the sender would have helped protect others from the same campaign."
+      },
+      "choices": []
+    }
+  ],
+  "recommendedSafeActions": [
+    "Never scan a QR code or enter your UPI PIN to receive money",
+    "Inspect the action on the payment screen: verify whether it says PAY or RECEIVE",
+    "Verify refund and order statuses directly inside the official shopping application"
+  ],
+  "learningSummary": "A QR code is exclusively a tool to send money. Legitimate merchants process refunds directly into your bank account without demanding any action, QR scan, or PIN approval."
+}

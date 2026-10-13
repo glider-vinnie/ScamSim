@@ -1,0 +1,54 @@
+:root {
+  /* Brand palette */
+  --color-navy: #194777;
+  --color-teal: #19869b;
+  --color-mist: #b2c8ca;
+  --color-sand: #eabd82;
+  --color-coral: #e96532;
+  --color-berry: #a92343;
+
+  /* Neutrals */
+  --color-ink: #0e1b2a;
+  --color-muted: #4a5b6b;
+  --color-bg: #f6f9f9;
+  --color-surface: #ffffff;
+  --color-surface-subtle: #ebf1f2; /* Mist @ 25% on white */
+
+  /* Semantic aliases */
+  --color-primary: #194777;
+  --color-primary-hover: #143a62;
+  --color-interactive: #19869b;
+  --color-border: #b2c8ca;
+  --color-highlight: #eabd82;
+  --color-warn: #e96532;
+  --color-danger: #a92343;
+  --color-focus: #19869b;
+  --color-success: #19869b;
+
+  /* Layout & Elevations */
+  --shadow-card: 0 1px 2px rgba(14, 27, 42, 0.06), 0 4px 12px rgba(14, 27, 42, 0.06);
+  --overlay: rgba(14, 27, 42, 0.5);
+
+  /* Radii */
+  --radius-card: 12px;
+  --radius-badge: 9999px;
+  --radius-button: 10px;
+}
+
+/* Global focus ring */
+*:focus-visible {
+  outline: 3px solid var(--color-interactive);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

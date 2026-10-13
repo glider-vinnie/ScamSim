@@ -1,0 +1,344 @@
+{
+  "id": "payment-screenshot",
+  "title": "The \"Payment Screenshot\" Ruse",
+  "category": "fake_confirmation",
+  "difficulty": "easy",
+  "estimatedDuration": 3,
+  "learningObjectives": [
+    "Verify credits directly in your own banking app rather than trusting buyer screenshots",
+    "Recognize fabricated time pressure designed to bypass verification checks",
+    "Maintain firm safety boundaries during in-person marketplace handovers"
+  ],
+  "startingContext": "You listed a scientific calculator on a campus student marketplace. Buyer Rohan K. claims he transferred ₹1,800 and sends a receipt screenshot, insisting his bus departs in 5 minutes.",
+  "skills": [
+    "payment_verification",
+    "urgency",
+    "safe_verification"
+  ],
+  "redFlags": [
+    {
+      "id": "A-RF1",
+      "label": "Payment screenshot presented as proof of payment",
+      "explanation": "Screenshots are easily altered or generated via fake receipt generator tools."
+    },
+    {
+      "id": "A-RF2",
+      "label": "Artificial time pressure",
+      "explanation": "Scammers claim buses are leaving or deadlines are looming to bypass balance checks."
+    },
+    {
+      "id": "A-RF3",
+      "label": "Payment receipt marked \"Processing\"",
+      "explanation": "Processing indicates money has not settled and may never be credited."
+    },
+    {
+      "id": "A-RF4",
+      "label": "Pressure to bypass checking own account balance",
+      "explanation": "Excuses about bank delays are used to guilt sellers into handing over goods."
+    }
+  ],
+  "startNodeId": "A1",
+  "decisionNodes": [
+    {
+      "id": "A1",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "payment_screenshot",
+        "speaker": "Rohan K. (fictional)",
+        "text": "Bhai, I just sent ₹1,800 to your UPI ID! Here is the payment screenshot. My bus leaves from campus gate in 5 minutes, please hand over the calculator quickly!",
+        "details": {
+          "amount": "₹1,800",
+          "status": "Processing",
+          "banner": "SIMULATION — NOT A REAL TRANSACTION."
+        }
+      },
+      "relevantSkills": [
+        "payment_verification",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "A-RF1",
+        "A-RF2",
+        "A-RF3"
+      ],
+      "feedback": {
+        "safeAlternative": "Always check your own banking application for verified credit before parting with goods.",
+        "considerNext": "Never rely on buyer devices or receipts when transferring merchandise."
+      },
+      "choices": [
+        {
+          "id": "A1-a",
+          "label": "Hand it over — screenshot looks fine",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "payment_verification": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "A-LOSS",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You handed over the calculator relying solely on the buyer's screenshot.",
+            "why": "Screenshots can be mocked easily; the funds never credited to your account."
+          }
+        },
+        {
+          "id": "A1-b",
+          "label": "Check my own UPI app for the credit first",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "payment_verification": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "A3",
+          "catches": [
+            "A-RF1",
+            "A-RF3"
+          ],
+          "explanation": {
+            "whatHappened": "You paused and opened your own banking app to verify actual credit.",
+            "why": "Only your own bank balance provides authoritative proof of an incoming transfer."
+          }
+        },
+        {
+          "id": "A1-c",
+          "label": "Ask him to resend the screenshot",
+          "riskLevel": "risky",
+          "scoreDelta": 0,
+          "skillUpdates": {
+            "payment_verification": -4,
+            "urgency": -2,
+            "safe_verification": -2
+          },
+          "nextNodeId": "A2",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You asked for another screenshot instead of inspecting your own balance.",
+            "why": "Requesting another screenshot wastes time and still relies on unverified sender claims."
+          }
+        }
+      ]
+    },
+    {
+      "id": "A2",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "chat",
+        "speaker": "Rohan K. (fictional)",
+        "text": "Look, my bank server is slow today! I already showed you the debit slip. My bus is honking, are you calling me a liar? Just give it!",
+        "details": {
+          "status": "Pending"
+        }
+      },
+      "relevantSkills": [
+        "payment_verification",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "A-RF1",
+        "A-RF2",
+        "A-RF4"
+      ],
+      "feedback": {
+        "safeAlternative": "Politely decline to release the item until your bank reflects the balance.",
+        "considerNext": "Do not let social awkwardness or accusations override basic safety."
+      },
+      "choices": [
+        {
+          "id": "A2-a",
+          "label": "Fine, take it",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "payment_verification": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "A-LOSS",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You yielded to emotional pressure and surrendered the item without verification.",
+            "why": "Scammers deliberately feign irritation to make sellers feel guilty."
+          }
+        },
+        {
+          "id": "A2-b",
+          "label": "Wait a few minutes, then check my own app",
+          "riskLevel": "cautious",
+          "scoreDelta": 1,
+          "skillUpdates": {
+            "payment_verification": 4,
+            "urgency": 2,
+            "safe_verification": 2
+          },
+          "nextNodeId": "A3",
+          "catches": [
+            "A-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You insisted on waiting before verifying your account.",
+            "why": "Waiting reduces urgency, though immediate account verification is safer."
+          }
+        },
+        {
+          "id": "A2-c",
+          "label": "Handover only once money shows in my account",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "payment_verification": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "A3",
+          "catches": [
+            "A-RF1",
+            "A-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You set a firm rule that items are released only after money reflects.",
+            "why": "Setting clear safety boundaries stops fake-payment scams instantly."
+          }
+        }
+      ]
+    },
+    {
+      "id": "A3",
+      "terminal": false,
+      "messageOrEvent": {
+        "eventType": "app_view",
+        "speaker": "Your Bank App (fictional)",
+        "text": "Account Balance: ₹320. No incoming credit of ₹1,800 found in transaction history. Buyer texts: 'Bank delay bro, trust me, give it!'",
+        "details": {
+          "balance": "₹320",
+          "status": "No credits found"
+        }
+      },
+      "relevantSkills": [
+        "payment_verification",
+        "urgency",
+        "safe_verification"
+      ],
+      "redFlagsPresent": [
+        "A-RF2",
+        "A-RF4"
+      ],
+      "feedback": {
+        "safeAlternative": "Never complete transactions based on promises of delayed funds.",
+        "considerNext": "Report suspicious buyers on student marketplace boards."
+      },
+      "choices": [
+        {
+          "id": "A3-a",
+          "label": "Hand over anyway",
+          "riskLevel": "critical",
+          "scoreDelta": -1,
+          "skillUpdates": {
+            "payment_verification": -10,
+            "urgency": -5,
+            "safe_verification": -5
+          },
+          "nextNodeId": "A-LOSS",
+          "catches": [],
+          "explanation": {
+            "whatHappened": "You ignored your bank app confirmation and trusted his promise.",
+            "why": "Never hand over goods when your own bank confirms zero payment."
+          }
+        },
+        {
+          "id": "A3-b",
+          "label": "Decline politely; offer to meet once payment shows",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "payment_verification": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "A-SAFE",
+          "catches": [
+            "A-RF2",
+            "A-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You offered to reschedule handover once funds actually credit.",
+            "why": "Legitimate buyers understand bank delays and are willing to wait."
+          }
+        },
+        {
+          "id": "A3-c",
+          "label": "Decline, block and report buyer on the marketplace",
+          "riskLevel": "safe",
+          "scoreDelta": 2,
+          "skillUpdates": {
+            "payment_verification": 10,
+            "urgency": 5,
+            "safe_verification": 5
+          },
+          "nextNodeId": "A-REPORTED",
+          "catches": [
+            "A-RF2",
+            "A-RF4"
+          ],
+          "explanation": {
+            "whatHappened": "You identified deliberate fraud and reported the account.",
+            "why": "Reporting fraudulent accounts helps safeguard fellow campus students."
+          }
+        }
+      ]
+    },
+    {
+      "id": "A-LOSS",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "The buyer walked away with your calculator, and no payment ever arrived."
+      },
+      "outcome": {
+        "type": "loss",
+        "title": "Calculator Handed Over Without Payment",
+        "text": "In this simulation, that choice would have cost you ₹1,800. The buyer took the item and the transaction never existed. No real money moved."
+      },
+      "choices": []
+    },
+    {
+      "id": "A-SAFE",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "You safely held onto your calculator until verified payment."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Item Protected — Awaiting Real Credit",
+        "text": "You refused to release the calculator without verified funds in your account. The buyer left and no fake transaction tricked you."
+      },
+      "choices": []
+    },
+    {
+      "id": "A-REPORTED",
+      "terminal": true,
+      "messageOrEvent": {
+        "eventType": "outcome",
+        "text": "Buyer reported and scam blocked."
+      },
+      "outcome": {
+        "type": "safe",
+        "title": "Scammer Blocked and Reported",
+        "text": "You identified the fake payment screenshot ruse, safeguarded your property, and flagged the fraudulent buyer to protect other students."
+      },
+      "choices": []
+    }
+  ],
+  "recommendedSafeActions": [
+    "Always check your personal bank balance directly in your app before handing over goods",
+    "Never accept payment screenshots as confirmation of received money",
+    "Do not let artificial time pressure rush your security verification routines"
+  ],
+  "learningSummary": "A screenshot is merely an image file that can be easily forged or manipulated. Always verify the incoming credit directly in your personal bank or UPI statement."
+}
